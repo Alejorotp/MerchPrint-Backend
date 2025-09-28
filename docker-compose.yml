@@ -1,0 +1,110 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: apps/auth-service/Dockerfile
+    container_name: auth-service
+    ports:
+      - "3001:3000"
+    environment:
+      DB_URI: mongodb://auth_user:auth_pass@auth-service-db:27017/auth_db
+    depends_on:
+      - auth-service-db
+  
+  orders-service:
+    build:
+      context: .
+      dockerfile: apps/orders-service/Dockerfile
+    container_name: orders-service
+    ports:
+      - "3002:3000"
+    environment:
+      DB_URI: mongodb://orders_user:orders_pass@orders-service-db:27017/orders_db
+    depends_on:
+      - orders-service-db
+    
+  companies-service:
+    build:
+      context: .
+      dockerfile: apps/companies-service/Dockerfile
+    container_name: companies-service
+    ports:
+      - "3003:3000"
+    environment:
+      DB_URI: mongodb://companies_user:companies_pass@companies-service-db:27017/companies_db
+    depends_on:
+      - companies-service-db
+
+  events-service:
+    build:
+      context: .
+      dockerfile: apps/events-service/Dockerfile
+    container_name: events-service
+    ports:
+      - "3004:3000"
+    environment:
+      DB_URI: mongodb://events_user:events_pass@events-service-db:27017/events_db
+    depends_on:
+      - events-service-db
+  
+  auth-service-db:
+    image: mongo:latest
+    container_name: auth-service-db
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: auth_user
+      MONGO_INITDB_ROOT_PASSWORD: auth_pass
+    volumes:
+      - auth_service_db_data:/data/db
+
+  orders-service-db:
+    image: mongo:latest
+    container_name: orders-service-db
+    restart: unless-stopped
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: orders_user
+      MONGO_INITDB_ROOT_PASSWORD: orders_pass
+    volumes:
+      - orders_service_db_data:/data/db
+
+  companies-service-db:
+    image: mongo:latest
+    container_name: companies-service-db
+    restart: unless-stopped
+    ports:
+      - "27020:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: companies_user
+      MONGO_INITDB_ROOT_PASSWORD: companies_pass
+    volumes:
+      - companies_service_db_data:/data/db
+
+  events-service-db:
+    image: mongo:latest
+    container_name: events-service-db
+    restart: unless-stopped
+    ports:
+      - "27021:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: events_user
+      MONGO_INITDB_ROOT_PASSWORD: events_pass
+    volumes:
+      - events_service_db_data:/data/db
+
+volumes:
+  auth_service_db_data:
+  orders_service_db_data:
+  companies_service_db_data:
+  events_service_db_data:
