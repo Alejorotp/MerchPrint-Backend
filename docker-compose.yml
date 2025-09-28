@@ -15,7 +15,7 @@ services:
     ports:
       - "3001:3000"
     environment:
-      DB_URI: mongodb://auth_user:auth_pass@auth-service-db:27017/auth_db
+      DB_URI: mongodb://auth_user:auth_pass@auth-service-db:27017/auth_db?authSource=admin
     depends_on:
       - auth-service-db
   
@@ -27,7 +27,7 @@ services:
     ports:
       - "3002:3000"
     environment:
-      DB_URI: mongodb://orders_user:orders_pass@orders-service-db:27017/orders_db
+      DB_URI: mongodb://orders_user:orders_pass@orders-service-db:27017/orders_db?authSource=admin
     depends_on:
       - orders-service-db
     
@@ -39,7 +39,7 @@ services:
     ports:
       - "3003:3000"
     environment:
-      DB_URI: mongodb://companies_user:companies_pass@companies-service-db:27017/companies_db
+      DB_URI: mongodb://companies_user:companies_pass@companies-service-db:27017/companies_db?authSource=admin
     depends_on:
       - companies-service-db
 
@@ -51,7 +51,7 @@ services:
     ports:
       - "3004:3000"
     environment:
-      DB_URI: mongodb://events_user:events_pass@events-service-db:27017/events_db
+      DB_URI: mongodb://events_user:events_pass@events-service-db:27017/events_db?authSource=admin
     depends_on:
       - events-service-db
   
