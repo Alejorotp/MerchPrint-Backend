@@ -31,9 +31,6 @@ export class InMemoryRequirementsRepository implements RequirementsRepositoryPor
         this.requirements = this.requirements.filter(req => req.id !== id);
     }
 
-    async eventExists(eventId: string): Promise<boolean> {
-        return this.requirements.some(req => req.eventId === eventId);
-    }
     async update(requirements: Requirements): Promise<Requirements> {
         const index = this.requirements.findIndex(req => req.id === requirements.id);
         if (index === -1) throw new Error('Requirements not found');

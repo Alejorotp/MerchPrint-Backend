@@ -5,10 +5,10 @@ export interface EventRepositoryPort {
   findById(id: string): Promise<Event | null>;
   findAll(): Promise<Event[]>;
   existsByTitle(title: string): Promise<boolean>;
+  findByTitle(title: string): Promise<Event | null>;
   deleteByTitle(title: string): Promise<void>;
+  deleteById(id: string): Promise<void>;
   update(event: Event): Promise<Event>;
-  findByDate(date: Date): Promise<Event[]>;
-  findByLocation(location: string): Promise<Event[]>;
   findByUserId(userId: string): Promise<Event[]>;
   count(): Promise<number>;
 }

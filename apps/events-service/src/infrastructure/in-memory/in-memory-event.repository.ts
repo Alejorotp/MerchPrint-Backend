@@ -29,5 +29,10 @@ export class InMemoryEventRepository implements EventRepositoryPort {
     async findByUserId(UserId: string) {
         return [...this.store.values()].filter(e => e.userId === UserId);
     }
+    async deleteById(id: string) { this.store.delete(id); }
+    async findByTitle(title: string) {
+        return [...this.store.values()].find(e => e.name === title) || null;
+    }
+
     async count() { return this.store.size; }
 }

@@ -31,6 +31,18 @@ export class MongooseEventRepository implements EventRepositoryPort {
     async deleteByTitle(title: string): Promise<void> {
     await this.eventModel.deleteOne({ name: title }).exec();
     }
+
+    async deleteById(id: string): Promise<void> {
+    await this.eventModel.findByIdAndDelete(id).exec();
+    }
+    async findByTitle(title: string): Promise<EventEntity | null> {
+    const event = await this.eventModel.findOne({ name: title }).exec();
+    if (!event) {
+      return null;
+    }
+    return new EventEntity(event.id, event.userId, event.name, event.date, event.location);
+    }
+
     async update(event: EventEntity): Promise<EventEntity> {
     const updated = await this.eventModel.findByIdAndUpdate(event.id, event, { new: true }).exec();
     if (!updated) {

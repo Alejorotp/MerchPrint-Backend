@@ -11,6 +11,5 @@ export interface RequirementsRepositoryPort {
     findByEventId(eventId: string): Promise<Requirements[]>;
     deleteById(id: string): Promise<void>;
     update(requirements: Requirements): Promise<Requirements>;
-    eventExists(eventId: string): Promise<boolean>;
     count(): Promise<number>;
 }   

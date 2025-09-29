@@ -99,23 +99,7 @@ export class MongooseRequirementsRepository
     );
   }
 
-  async eventExists(eventId: string): Promise<boolean> {
-    const exists = await fetch(`http://localhost:3004/events/${eventId}`)
-      .then((response) => {
-        if (!response.ok) throw new Error('Event not found');
-        return true;
-      })
-      .then((data) => {
-        console.log('Evento:', data);
-        return true;
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        return false;
-      });
-      return exists;
-  }
-
+  
   async count(): Promise<number> {
     return this.requirementsModel.countDocuments().exec();
   }

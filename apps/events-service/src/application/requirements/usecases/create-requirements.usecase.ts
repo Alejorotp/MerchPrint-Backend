@@ -10,8 +10,6 @@ import { toRequirementsDTO } from '../mappers/requirements.mapper';
 export class CreateRequirementsUseCase {
   constructor(private readonly requirementsRepo: RequirementsRepositoryPort) {}
   async execute(input: CreateRequirementsDTO): Promise<RequirementsDTO> {
-    const eventExists = await this.requirementsRepo.eventExists(input.eventId);
-    if (!eventExists) throw new Error('Event not found');
     const requirements = new Requirements(
       randomUUID(),
       input.eventId,
