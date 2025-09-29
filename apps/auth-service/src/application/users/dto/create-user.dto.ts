@@ -1,9 +1,17 @@
 // create-user.dto.ts
 
-type CreateUserDTO = {
+import { IsEmail, IsNotEmpty } from 'class-validator';
+
+export class CreateUserDTO {
+    @IsEmail()
     email: string;
+
+    @IsNotEmpty()
     name: string;
+
+    @IsNotEmpty()
     password: string;
-    role: string;
+
+    @IsNotEmpty()
+    roleId: string;
 };
-export type { CreateUserDTO };

@@ -11,7 +11,7 @@ export class CreateUserUseCase {
     async execute(input: CreateUserDTO) {
         const emailTaken = await this.userRepo.existsByEmail(input.email);
         if (emailTaken) throw new Error('Email already in use');
-        const user = new User(randomUUID(), input.name, input.email, input.password, input.role);
+        const user = new User(randomUUID().toString(), input.email, input.name, input.password, input.roleId);
         return this.userRepo.save(user);
     }
 }

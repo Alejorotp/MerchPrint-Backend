@@ -13,7 +13,7 @@ export class MongooseUserRepository implements UserRepositoryPort {
   async save(user: UserEntity): Promise<UserEntity> {
     const createdUser = new this.userModel(user);
     const saved = await createdUser.save();
-    return new UserEntity(saved.id, saved.email, saved.name, saved.password_hash, saved.role);
+    return new UserEntity(saved.id, saved.email, saved.name, saved.password_hash, saved.roleId);
   }
 
   async findById(id: string): Promise<UserEntity | null> {
@@ -21,12 +21,12 @@ export class MongooseUserRepository implements UserRepositoryPort {
     if (!user) {
       return null;
     }
-    return new UserEntity(user.id, user.email, user.name, user.password_hash, user.role);
+    return new UserEntity(user.id, user.email, user.name, user.password_hash, user.roleId);
   }
 
   async findAll(): Promise<UserEntity[]> {
     const users = await this.userModel.find().exec();
-    return users.map(user => new UserEntity(user.id, user.email, user.name, user.password_hash, user.role));
+    return users.map(user => new UserEntity(user.id, user.email, user.name, user.password_hash, user.roleId));
   }
 
   async existsByEmail(email: string): Promise<boolean> {
