@@ -8,4 +8,6 @@ export interface RoleRepositoryPort {
     findAll(): Promise<Role[]>;
     delete(id: string): Promise<void>;
     existsByName(name: string): Promise<boolean>;
+    existsById(id: string): Promise<boolean>;
+    update(id: string, update: Partial<Role>): Promise<Role | null>;
 }

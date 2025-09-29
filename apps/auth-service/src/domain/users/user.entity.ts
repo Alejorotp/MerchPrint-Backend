@@ -1,13 +1,28 @@
 // user.entity.ts
 
-export class User { 
+import { ApiProperty } from '@nestjs/swagger';
 
-    constructor(
-        public readonly id: string,
-        public readonly email: string,
-        public name: string,
-        public password_hash: string,
-        public readonly roleId: string,
-    ) {}
+export class User {
+    @ApiProperty()
+    public readonly id?: string;
 
+    @ApiProperty()
+    public readonly email: string;
+
+    @ApiProperty()
+    public name: string;
+
+    @ApiProperty()
+    public password_hash: string;
+
+    @ApiProperty()
+    public readonly roleId: string;
+
+    constructor(email: string, name: string, password_hash: string, roleId: string, id?: string) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.password_hash = password_hash;
+        this.roleId = roleId;
+    }
 }

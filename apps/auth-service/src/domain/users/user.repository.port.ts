@@ -7,4 +7,7 @@ export interface UserRepositoryPort {
     findById(id: string): Promise<User | null>;
     findAll(): Promise<User[]>;
     existsByEmail(email: string): Promise<boolean>;
+    existsById(id: string): Promise<boolean>;
+    deleteById(id: string): Promise<void>;
+    update(user: User): Promise<User>;
 }

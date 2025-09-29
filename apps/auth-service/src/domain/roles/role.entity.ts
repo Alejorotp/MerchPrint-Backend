@@ -1,9 +1,19 @@
 // role.entity.ts
+import { ApiProperty } from '@nestjs/swagger';
 
 export class Role {
-    constructor(
-        public id: string,
-        public name: string,
-        public permissions: string[],
-    ) {}
+    @ApiProperty()
+    public id?: string | null;
+
+    @ApiProperty()
+    public name: string;
+
+    @ApiProperty()
+    public permissions: string[];
+
+    constructor(name: string, permissions: string[], id?: string) {
+        this.id = id;
+        this.name = name;
+        this.permissions = permissions;
+    }
 }

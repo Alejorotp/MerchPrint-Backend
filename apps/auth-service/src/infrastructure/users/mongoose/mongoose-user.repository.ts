@@ -33,4 +33,31 @@ export class MongooseUserRepository implements UserRepositoryPort {
     const count = await this.userModel.countDocuments({ email }).exec();
     return count > 0;
   }
+
+  async existsById(id: string): Promise<boolean> {
+    const count = await this.userModel.countDocuments({ _id: id }).exec();
+    return count > 0;
+  }
+
+  async deleteById(id: string): Promise<void> {
+    await this.userModel.findByIdAndDelete(id).exec();
+  }
+
+  async update(user: UserEntity): Promise<UserEntity> {
+    const updated = await this.userModel.findByIdAndUpdate(
+      user.id,
+      {
+        name: user.name,
+        password_hash: user.password_hash,
+        roleId: user.roleId,
+      },
+      { new: true },
+    ).exec();
+
+    if (!updated) {
+      throw new Error('User not found');
+    }
+
+    return new UserEntity(updated.id, updated.email, updated.name, updated.password_hash, updated.roleId);
+  }
 }
