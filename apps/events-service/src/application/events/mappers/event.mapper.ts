@@ -10,7 +10,3 @@ export const toEventDTO = (event: Event): eventDTO => ({
     location: event.location,
     userId: event.userId,
 });
-
-export const toEventEntity = (dto: eventDTO): Event => {
-    return new Event(dto.id, dto.userId, dto.name, dto.date, dto.location);
-}

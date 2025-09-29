@@ -5,7 +5,7 @@ export class Requirements {
         public readonly id: string,
         public eventId: string,
         public description: string,
-        public quantity: string,
+        public quantity: number,
         public specs_json: JSON
     ) {}
 }

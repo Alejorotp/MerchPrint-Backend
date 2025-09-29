@@ -9,6 +9,6 @@ export interface EventRepositoryPort {
   update(event: Event): Promise<Event>;
   findByDate(date: Date): Promise<Event[]>;
   findByLocation(location: string): Promise<Event[]>;
-  findByOrganizer(organizerId: string): Promise<Event[]>;
+  findByUserId(userId: string): Promise<Event[]>;
   count(): Promise<number>;
 }

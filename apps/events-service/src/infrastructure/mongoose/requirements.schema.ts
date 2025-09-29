@@ -13,12 +13,10 @@ export class Requirements extends Document {
     eventId: string;
     @Prop({ type: String, required: true })
     description: string;
-    @Prop({ type: String, required: true })
-    quantity: string;
+    @Prop({ type: Number, required: true })
+    quantity: number;
     @Prop({ type: Object, required: true })
     specs_json: JSON;
-    @Prop({ type: String, ref: Event.name, required: true })
-    event: Event;
 }
 
 export const RequirementsSchema = SchemaFactory.createForClass(Requirements);

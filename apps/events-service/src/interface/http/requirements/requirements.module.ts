@@ -2,12 +2,13 @@
 
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CreateRequirementsUseCase } from '../../../application/events/usecases/create-requirements.usecase';
+import { CreateRequirementsUseCase } from '../../../application/requirements/usecases/create-requirements.usecase';
 import { REQUIREMENTS_REPOSITORY } from '../../../application/tokens';
 import { MongooseRequirementsRepository } from '../../../infrastructure/mongoose/mongoose-requirements.repository';
 import { InMemoryRequirementsRepository } from '../../../infrastructure/in-memory/in-memory-requirements.repository';
 import { Requirements, RequirementsSchema } from '../../../infrastructure/mongoose/requirements.schema';
 import { RequirementsController } from './requirements.controller';
+import { GetRequirementsUseCase } from '../../../application/requirements/usecases/get-requirements.usecase';
 const useMongoose = !!process.env.DB_URI;
 @Module({
     imports: [
@@ -20,6 +21,7 @@ const useMongoose = !!process.env.DB_URI;
             useClass: useMongoose ? MongooseRequirementsRepository : InMemoryRequirementsRepository,
         },
         { provide: CreateRequirementsUseCase, useFactory: (repo: any) => new CreateRequirementsUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
+        { provide: GetRequirementsUseCase, useFactory: (repo: any) => new GetRequirementsUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
     ],
 })
 export class RequirementsHttpModule {}

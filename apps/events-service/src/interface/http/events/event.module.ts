@@ -8,6 +8,7 @@ import {MongooseEventRepository} from '../../../infrastructure/mongoose/mongoose
 import {InMemoryEventRepository} from '../../../infrastructure/in-memory/in-memory-event.repository';
 import {Event, EventSchema} from '../../../infrastructure/mongoose/event.schema';
 import {EventsController} from './events.controller'; 
+import {GetEventsUseCase} from '../../../application/events/usecases/get-events.usecase';
 
 const useMongoose = !!process.env.DB_URI;
 
@@ -22,6 +23,7 @@ const useMongoose = !!process.env.DB_URI;
             useClass: useMongoose ? MongooseEventRepository : InMemoryEventRepository,
         },
         {provide: CreateEventUseCase, useFactory: (repo: any) => new CreateEventUseCase(repo), inject: [EVENT_REPOSITORY]},
+        {provide: GetEventsUseCase, useFactory: (repo: any) => new GetEventsUseCase(repo), inject: [EVENT_REPOSITORY]},
     ],
 })
 export class EventsHttpModule {}

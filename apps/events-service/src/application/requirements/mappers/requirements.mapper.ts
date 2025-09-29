@@ -10,7 +10,3 @@ export const toRequirementsDTO = (requirements: Requirements): any => ({
     quantity: requirements.quantity,
     specs_json: requirements.specs_json,
 });
-
-export const toRequirementsEntity = (dto: CreateRequirementsDTO, id: string): Requirements => {
-    return new Requirements(id, dto.eventId, dto.description, dto.quantity, dto.specs_json);
-}

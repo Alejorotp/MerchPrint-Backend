@@ -46,8 +46,8 @@ export class MongooseEventRepository implements EventRepositoryPort {
     const events = await this.eventModel.find({ location }).exec();
     return events.map(event => new EventEntity(event.id, event.userId, event.name, event.date, event.location));
     }
-    async findByOrganizer(organizerId: string): Promise<EventEntity[]> {
-    const events = await this.eventModel.find({ userId: organizerId }).exec();
+    async findByUserId(userId: string): Promise<EventEntity[]> {
+    const events = await this.eventModel.find({ userId: userId }).exec();
     return events.map(event => new EventEntity(event.id, event.userId, event.name, event.date, event.location));
     }
     async count(): Promise<number> {

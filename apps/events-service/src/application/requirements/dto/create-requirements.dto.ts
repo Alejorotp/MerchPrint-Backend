@@ -3,7 +3,7 @@
 type CreateRequirementsDTO = {
     eventId: string;
     description: string;
-    quantity: string;
+    quantity: number;
     specs_json: JSON;
 };
 
