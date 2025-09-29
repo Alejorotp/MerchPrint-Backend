@@ -18,7 +18,7 @@ services:
       DB_URI: mongodb://auth_user:auth_pass@auth-service-db:27017/auth_db?authSource=admin
     depends_on:
       - auth-service-db
-  
+
   orders-service:
     build:
       context: .
@@ -30,7 +30,7 @@ services:
       DB_URI: mongodb://orders_user:orders_pass@orders-service-db:27017/orders_db?authSource=admin
     depends_on:
       - orders-service-db
-    
+
   companies-service:
     build:
       context: .
@@ -54,7 +54,7 @@ services:
       DB_URI: mongodb://events_user:events_pass@events-service-db:27017/events_db?authSource=admin
     depends_on:
       - events-service-db
-  
+
   auth-service-db:
     image: mongo:latest
     container_name: auth-service-db
@@ -68,7 +68,7 @@ services:
       - auth_service_db_data:/data/db
 
   orders-service-db:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: orders-service-db
     restart: unless-stopped
     ports:
@@ -76,6 +76,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: orders_user
       MONGO_INITDB_ROOT_PASSWORD: orders_pass
+      MONGO_INITDB_DATABASE: orders_db
     volumes:
       - orders_service_db_data:/data/db
 
