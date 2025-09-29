@@ -1,3 +1,5 @@
 // tokens.ts
 
 export const EVENT_REPOSITORY = Symbol('EVENT_REPOSITORY');
+
+export const REQUIREMENTS_REPOSITORY = Symbol('REQUIREMENTS_REPOSITORY');
