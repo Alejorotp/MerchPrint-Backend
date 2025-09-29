@@ -4,13 +4,13 @@ import { OrderRepositoryPort } from '../../domain/repositories/order.repository'
 import { CreateOrderDTO } from '../dto/create-order.dto';
 
 export class CreateOrderUseCase {
-  constructor(private readonly orderRepo: OrderRepositoryPort) { }
+  constructor(private readonly orderRepo: OrderRepositoryPort) {}
 
   async execute(input: CreateOrderDTO): Promise<Order> {
     const order = new Order(
       randomUUID(),
       input.client_id,
-      null, // no offer assigned initially
+      input.offer_id, // offer is required to create an order
       OrderStatus.PENDING,
       new Date(),
       new Date(),

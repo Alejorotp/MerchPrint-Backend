@@ -3,7 +3,7 @@ type CreateOfferDTO = {
   company_id: string;
   price: number;
   lead_time_days: number;
-  specs_json?: Record<string, any>;
+  specs_json?: JSON;
 };
 
 type OfferDTO = {
@@ -14,7 +14,7 @@ type OfferDTO = {
   lead_time_days: number;
   status: string;
   created_at: Date;
-  specs_json: Record<string, any>;
+  specs_json?: JSON;
 };
 
 export type { CreateOfferDTO, OfferDTO };

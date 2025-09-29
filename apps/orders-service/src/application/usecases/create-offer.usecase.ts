@@ -4,10 +4,9 @@ import { OfferRepositoryPort } from '../../domain/repositories/offer.repository.
 import { CreateOfferDTO } from '../dto/create-offer.dto';
 
 export class CreateOfferUseCase {
-  constructor(private readonly offerRepo: OfferRepositoryPort) { }
+  constructor(private readonly offerRepo: OfferRepositoryPort) {}
 
   async execute(input: CreateOfferDTO): Promise<Offer> {
-    // Validate that price and lead time are positive
     if (input.price <= 0) {
       throw new Error('Price must be positive');
     }
@@ -23,7 +22,7 @@ export class CreateOfferUseCase {
       input.lead_time_days,
       OfferStatus.PENDING,
       new Date(),
-      input.specs_json || {},
+      input.specs_json,
     );
 
     return this.offerRepo.save(offer);

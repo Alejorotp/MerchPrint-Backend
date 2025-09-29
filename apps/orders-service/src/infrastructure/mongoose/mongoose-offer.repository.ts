@@ -10,7 +10,7 @@ export class MongooseOfferRepository implements OfferRepositoryPort {
   constructor(
     @InjectModel(OfferDocument.name)
     private readonly offerModel: Model<OfferDocument>,
-  ) { }
+  ) {}
 
   private toDomain(offerDoc: OfferDocument): Offer {
     return new Offer(

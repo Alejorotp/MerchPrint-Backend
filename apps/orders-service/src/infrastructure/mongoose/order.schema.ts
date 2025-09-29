@@ -6,7 +6,7 @@ export class OrderDocument extends Document {
   @Prop({ required: true })
   client_id: string;
 
-  @Prop({ required: false, default: null, type: String })
+  @Prop({ required: true })
   offer_id: string;
 
   @Prop({

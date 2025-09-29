@@ -25,8 +25,8 @@ export class OfferDocument extends Document {
   @Prop({ default: Date.now })
   created_at: Date;
 
-  @Prop({ type: Object, default: {} })
-  specs_json: Record<string, any>;
+  @Prop({ type: Object, required: false })
+  specs_json?: JSON;
 }
 
 export const OfferSchema = SchemaFactory.createForClass(OfferDocument);

@@ -1,5 +1,6 @@
+import { randomUUID } from 'crypto';
 import { Order, OrderStatus } from '../../domain/entities/order.entity';
-import { Offer, OfferStatus } from '../../domain/entities/offer.entity';
+import { OfferStatus } from '../../domain/entities/offer.entity';
 import { OrderRepositoryPort } from '../../domain/repositories/order.repository';
 import { OfferRepositoryPort } from '../../domain/repositories/offer.repository.port';
 
@@ -7,20 +8,9 @@ export class AcceptOfferUseCase {
   constructor(
     private readonly orderRepo: OrderRepositoryPort,
     private readonly offerRepo: OfferRepositoryPort,
-  ) { }
+  ) {}
 
-  async execute(orderId: string, offerId: string): Promise<Order> {
-    // Find the order
-    const order = await this.orderRepo.findById(orderId);
-    if (!order) {
-      throw new Error('Order not found');
-    }
-
-    // Validate order can accept offers
-    if (order.status !== OrderStatus.PENDING) {
-      throw new Error('Only pending orders can accept offers');
-    }
-
+  async execute(clientId: string, offerId: string): Promise<Order> {
     // Find the offer
     const offer = await this.offerRepo.findById(offerId);
     if (!offer) {
@@ -36,9 +26,6 @@ export class AcceptOfferUseCase {
     offer.accept();
     await this.offerRepo.update(offerId, offer);
 
-    // Assign offer to order
-    order.assignOffer(offerId);
-
     // Reject other offers for the same auction
     const otherOffers = await this.offerRepo.findByAuctionId(offer.auction_id);
     for (const otherOffer of otherOffers) {
@@ -51,11 +38,21 @@ export class AcceptOfferUseCase {
       }
     }
 
-    return this.orderRepo.update(orderId, order).then((updatedOrder) => {
-      if (!updatedOrder) {
-        throw new Error('Failed to update order');
-      }
-      return updatedOrder;
-    });
+    // Create a new order with the accepted offer
+    const order = new Order(
+      randomUUID(),
+      clientId,
+      offerId,
+      OrderStatus.IN_PROGRESS,
+      new Date(),
+      new Date(),
+    );
+
+    const savedOrder = await this.orderRepo.save(order);
+    if (!savedOrder) {
+      throw new Error('Failed to create order');
+    }
+
+    return savedOrder;
   }
 }

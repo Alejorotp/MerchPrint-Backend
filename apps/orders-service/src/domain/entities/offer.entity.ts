@@ -16,8 +16,8 @@ export class Offer {
     public readonly lead_time_days: number,
     public status: OfferStatus,
     public readonly created_at: Date = new Date(),
-    public readonly specs_json: Record<string, any> = {},
-  ) { }
+    public readonly specs_json?: JSON,
+  ) {}
 
   accept(): void {
     if (this.status !== OfferStatus.PENDING) {

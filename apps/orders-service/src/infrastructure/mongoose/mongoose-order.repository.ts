@@ -10,7 +10,7 @@ export class MongooseOrderRepository implements OrderRepositoryPort {
   constructor(
     @InjectModel(OrderDocument.name)
     private readonly orderModel: Model<OrderDocument>,
-  ) { }
+  ) {}
 
   private toDomain(orderDoc: OrderDocument): Order {
     return new Order(
