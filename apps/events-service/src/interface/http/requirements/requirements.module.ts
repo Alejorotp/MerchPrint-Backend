@@ -11,6 +11,7 @@ import { RequirementsController } from './requirements.controller';
 import { GetRequirementsUseCase } from '../../../application/requirements/usecases/get-requirements.usecase';
 import { UpdateRequirementsUseCase } from 'apps/events-service/src/application/requirements/usecases/update-requirements.usecase';
 import { DeleteEventUseCase } from 'apps/events-service/src/application/events/usecases/delete-event.usecase';
+import { DeleteRequirementsUseCase } from 'apps/events-service/src/application/requirements/usecases/delete-requirements.usecase';
 
 const useMongoose = !!process.env.DB_URI;
 
@@ -27,7 +28,7 @@ const useMongoose = !!process.env.DB_URI;
         { provide: CreateRequirementsUseCase, useFactory: (repo: any) => new CreateRequirementsUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
         { provide: GetRequirementsUseCase, useFactory: (repo: any) => new GetRequirementsUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
         { provide: UpdateRequirementsUseCase, useFactory: (repo: any) => new UpdateRequirementsUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
-        { provide: DeleteEventUseCase, useFactory: (repo: any) => new DeleteEventUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
+        { provide: DeleteRequirementsUseCase,useFactory : (repo:any) => new DeleteRequirementsUseCase(repo), inject: [REQUIREMENTS_REPOSITORY] },
 
     ],
 })
