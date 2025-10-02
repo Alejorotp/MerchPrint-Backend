@@ -12,9 +12,9 @@ export class CreateUserDTO {
     @IsNotEmpty()
     name: string;
 
-    @ApiProperty({ example: 'hashed_password' })
+    @ApiProperty({ example: 'password123' })
     @IsNotEmpty()
-    password_hash: string;
+    password: string;
 
     @ApiProperty({ example: 'roleId' })
     @IsNotEmpty()

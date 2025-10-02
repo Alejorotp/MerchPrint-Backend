@@ -11,6 +11,7 @@ export class InMemoryUserRepository implements UserRepositoryPort {
     return u;
   }
   async findById(id: string) { return this.store.get(id) ?? null; }
+  async findByEmail(email: string) { return [...this.store.values()].find(u => u.email === email) ?? null; }
   async findAll() { return [...this.store.values()]; }
   async existsByEmail(email: string) { return [...this.store.values()].some(u => u.email === email); }
   async existsById(id: string) { return this.store.has(id); }

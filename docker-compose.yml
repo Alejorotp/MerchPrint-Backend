@@ -16,6 +16,7 @@ services:
       - "3001:3000"
     environment:
       DB_URI: mongodb://auth_user:auth_pass@auth-service-db:27017/auth_db?authSource=admin
+      JWT_SECRET: 42a50a5f631234be3f9ff00d5578b764
     depends_on:
       - auth-service-db
 

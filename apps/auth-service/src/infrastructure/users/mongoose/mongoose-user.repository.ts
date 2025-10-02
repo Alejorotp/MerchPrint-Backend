@@ -13,7 +13,7 @@ export class MongooseUserRepository implements UserRepositoryPort {
   async save(user: UserEntity): Promise<UserEntity> {
     const createdUser = new this.userModel(user);
     const saved = await createdUser.save();
-    return new UserEntity(saved.id, saved.email, saved.name, saved.password_hash, saved.roleId);
+    return new UserEntity(saved.email, saved.name, saved.password_hash, saved.roleId, saved.id);
   }
 
   async findById(id: string): Promise<UserEntity | null> {
@@ -21,12 +21,20 @@ export class MongooseUserRepository implements UserRepositoryPort {
     if (!user) {
       return null;
     }
-    return new UserEntity(user.id, user.email, user.name, user.password_hash, user.roleId);
+    return new UserEntity(user.email, user.name, user.password_hash, user.roleId, user.id);
+  }
+
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    const user = await this.userModel.findOne({ email }).exec();
+    if (!user) {
+      return null;
+    }
+    return new UserEntity(user.email, user.name, user.password_hash, user.roleId, user.id);
   }
 
   async findAll(): Promise<UserEntity[]> {
     const users = await this.userModel.find().exec();
-    return users.map(user => new UserEntity(user.id, user.email, user.name, user.password_hash, user.roleId));
+    return users.map(user => new UserEntity(user.email, user.name, user.password_hash, user.roleId, user.id));
   }
 
   async existsByEmail(email: string): Promise<boolean> {
@@ -58,6 +66,6 @@ export class MongooseUserRepository implements UserRepositoryPort {
       throw new Error('User not found');
     }
 
-    return new UserEntity(updated.id, updated.email, updated.name, updated.password_hash, updated.roleId);
+    return new UserEntity(updated.email, updated.name, updated.password_hash, updated.roleId, updated.id);
   }
 }

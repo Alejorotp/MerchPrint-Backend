@@ -4,9 +4,10 @@ import { toUserDTO  } from "../../../application/users/mappers/user.mapper";
 import { Body, Controller, Post, Get, Delete, Put, Param } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-
 import { CreateUserDTO } from '../../../application/users/dto/create-user.dto';
-
+import { LoginDTO } from '../../../application/auth/dto/login.dto';
+import { RefreshTokenDTO } from '../../../application/auth/dto/refresh-token.dto';
+import { AuthResponseDTO } from '../../../application/auth/dto/auth-response.dto';
 
 import { DeleteUserUseCase } from "apps/auth-service/src/application/users/usecases/delete-user.usecase";
 import { UpdateUserUseCase } from "apps/auth-service/src/application/users/usecases/update-user.usecase";
@@ -14,6 +15,8 @@ import { GetAllUsersUseCase } from "apps/auth-service/src/application/users/usec
 import { CreateUserUseCase } from "../../../application/users/usecases/create-user.usecase";
 import { GetUserUseCase } from "../../../application/users/usecases/get-user.usecase";
 import { ExistsByEmailUseCase, ExistsByIdUseCase } from "apps/auth-service/src/application/users/usecases/exists-user.usecase";
+import { LoginUseCase } from '../../../application/auth/usecases/login.usecase';
+import { RefreshTokenUseCase } from '../../../application/auth/usecases/refresh-token.usecase';
 
 @ApiTags('users')
 @Controller('users')
@@ -26,7 +29,25 @@ export class UsersController {
     private readonly getAllUsers: GetAllUsersUseCase,
     private readonly existsUserByEmail: ExistsByEmailUseCase,
     private readonly existsUserById: ExistsByIdUseCase,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
   ) {}
+
+  @Post('login')
+  @ApiOperation({ summary: 'Login user' })
+  @ApiResponse({ status: 200, description: 'User logged in successfully.', type: AuthResponseDTO })
+  @ApiResponse({ status: 401, description: 'Invalid credentials.' })
+  async login(@Body() body: LoginDTO): Promise<AuthResponseDTO> {
+    return this.loginUseCase.execute(body);
+  }
+
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({ status: 200, description: 'Token refreshed successfully.', type: AuthResponseDTO })
+  @ApiResponse({ status: 401, description: 'Invalid refresh token.' })
+  async refreshToken(@Body() body: RefreshTokenDTO): Promise<AuthResponseDTO> {
+    return this.refreshTokenUseCase.execute(body);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
