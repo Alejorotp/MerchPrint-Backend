@@ -1,10 +1,25 @@
 // event.dto.ts
+import { ApiProperty } from "@nestjs/swagger";
 
-type eventDTO = {
-    id: string;
-    userId: string;
-    name: string;
-    date: Date;
-    location: string;
-};
-export type { eventDTO };
+
+class eventDTO {
+    @ApiProperty()
+    public  id: string
+    @ApiProperty()
+    public  userId: string
+    @ApiProperty()
+    public  name: string
+    @ApiProperty()
+    public  date: Date
+    @ApiProperty()
+    public  location: string
+
+    constructor(id: string, userId: string, name: string, date: Date, location: string) {
+        this.id = id;
+        this.userId = userId;
+        this.name = name;
+        this.date = date;
+        this.location = location;
+    }
+}
+export { eventDTO };

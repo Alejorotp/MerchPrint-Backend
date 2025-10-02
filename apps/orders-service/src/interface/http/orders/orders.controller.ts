@@ -7,7 +7,13 @@ import {
   Get,
   Delete,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+} from '@nestjs/swagger';
 import { CreateOrderUseCase } from '../../../application/usecases/create-order.usecase';
 import { CreateOfferUseCase } from '../../../application/usecases/create-offer.usecase';
 import { AcceptOfferUseCase } from '../../../application/usecases/accept-offer.usecase';
@@ -22,10 +28,14 @@ import { GetOffersByCompanyUseCase } from '../../../application/usecases/get-off
 import { DeleteOrderUseCase } from '../../../application/usecases/delete-order.usecase';
 import { UpdateOfferUseCase } from '../../../application/usecases/update-offer.usecase';
 import { DeleteOfferUseCase } from '../../../application/usecases/delete-offer.usecase';
-import type { CreateOrderDTO } from '../../../application/dto/create-order.dto';
-import type { CreateOfferDTO } from '../../../application/dto/create-offer.dto';
-import type { UpdateOrderStatusDTO } from '../../../application/dto/update-order-status.dto';
-import type { UpdateOfferDTO } from '../../../application/dto/update-offer.dto';
+import { CreateOrderDTO } from '../../../application/dto/create-order.dto';
+import {
+  CreateOfferDTO,
+  OfferDTO,
+} from '../../../application/dto/create-offer.dto';
+import { UpdateOrderStatusDTO } from '../../../application/dto/update-order-status.dto';
+import { UpdateOfferDTO } from '../../../application/dto/update-offer.dto';
+import { OrderDTO } from '../../../application/dto/order.dto';
 import { OrderMapper } from '../../../application/mappers/order.mapper';
 import { OfferMapper } from '../../../application/mappers/offer.mapper';
 
@@ -50,6 +60,14 @@ export class OrdersController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Crear una nueva orden' })
+  @ApiBody({ type: CreateOrderDTO })
+  @ApiResponse({
+    status: 201,
+    description: 'Orden creada exitosamente',
+    type: OrderDTO,
+  })
+  @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   async createOrder(@Body() body: CreateOrderDTO) {
     if (!body?.client_id) {
       throw new Error('client_id is required');
@@ -59,6 +77,18 @@ export class OrdersController {
   }
 
   @Post(':orderId/offers')
+  @ApiOperation({ summary: 'Crear una nueva oferta para una orden' })
+  @ApiParam({
+    name: 'orderId',
+    description: 'ID de la orden',
+  })
+  @ApiBody({ type: CreateOfferDTO })
+  @ApiResponse({
+    status: 201,
+    description: 'Oferta creada exitosamente',
+    type: OfferDTO,
+  })
+  @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
   async createOffer(
     @Param('orderId') orderId: string,
     @Body() body: CreateOfferDTO,
@@ -80,6 +110,13 @@ export class OrdersController {
   }
 
   @Get(':orderId')
+  @ApiOperation({ summary: 'Obtener una orden por ID' })
+  @ApiParam({
+    name: 'orderId',
+    description: 'ID de la orden',
+  })
+  @ApiResponse({ status: 200, description: 'Orden encontrada', type: OrderDTO })
+  @ApiResponse({ status: 404, description: 'Orden no encontrada' })
   async getOrderById(@Param('orderId') orderId: string) {
     const order = await this.getOrderByIdUseCase.execute(orderId);
     if (!order) {
@@ -89,18 +126,51 @@ export class OrdersController {
   }
 
   @Get('client/:clientId')
+  @ApiOperation({ summary: 'Obtener todas las órdenes de un cliente' })
+  @ApiParam({
+    name: 'clientId',
+    description: 'ID del cliente',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de órdenes del cliente',
+    type: [OrderDTO],
+  })
   async getOrdersByClient(@Param('clientId') clientId: string) {
     const orders = await this.getOrdersByClientUseCase.execute(clientId);
     return OrderMapper.toDTOList(orders);
   }
 
   @Get('auction/:auctionId/offers')
+  @ApiOperation({ summary: 'Obtener todas las ofertas de una subasta' })
+  @ApiParam({
+    name: 'auctionId',
+    description: 'ID de la subasta',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de ofertas de la subasta',
+    type: [OfferDTO],
+  })
   async getOffersByAuction(@Param('auctionId') auctionId: string) {
     const offers = await this.getOffersByAuctionUseCase.execute(auctionId);
     return OfferMapper.toDTOList(offers);
   }
 
   @Put(':orderId/status')
+  @ApiOperation({ summary: 'Actualizar el estado de una orden' })
+  @ApiParam({
+    name: 'orderId',
+    description: 'ID de la orden',
+  })
+  @ApiBody({ type: UpdateOrderStatusDTO })
+  @ApiResponse({
+    status: 200,
+    description: 'Estado de la orden actualizado',
+    type: OrderDTO,
+  })
+  @ApiResponse({ status: 400, description: 'Datos de entrada inválidos' })
+  @ApiResponse({ status: 404, description: 'Orden no encontrada' })
   async updateOrderStatus(
     @Param('orderId') orderId: string,
     @Body() body: UpdateOrderStatusDTO,
@@ -113,6 +183,17 @@ export class OrdersController {
   }
 
   @Get('offers/:offerId')
+  @ApiOperation({ summary: 'Obtener una oferta por ID' })
+  @ApiParam({
+    name: 'offerId',
+    description: 'ID de la oferta',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Oferta encontrada',
+    type: OfferDTO,
+  })
+  @ApiResponse({ status: 404, description: 'Oferta no encontrada' })
   async getOfferById(@Param('offerId') offerId: string) {
     const offer = await this.getOfferByIdUseCase.execute(offerId);
     if (!offer) {

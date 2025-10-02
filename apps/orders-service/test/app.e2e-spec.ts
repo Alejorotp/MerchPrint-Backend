@@ -15,10 +15,11 @@ describe('OrdersServiceController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should have Swagger documentation available', () => {
+    return request(app.getHttpServer()).get('/docs').expect(301); // Redirect to Swagger UI
   });
 });
