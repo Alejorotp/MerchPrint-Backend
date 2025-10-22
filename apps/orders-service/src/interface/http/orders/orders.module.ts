@@ -31,6 +31,7 @@ import {
   OfferSchema,
 } from '../../../infrastructure/mongoose/offer.schema';
 import { OrdersController } from './orders.controller';
+import { OrdersRmqController } from '../../rmq/orders.rmq.controller';
 
 const useMongoose = !!process.env.DB_URI;
 
@@ -45,7 +46,7 @@ const useMongoose = !!process.env.DB_URI;
         ]
       : []),
   ],
-  controllers: [OrdersController],
+  controllers: [OrdersController, OrdersRmqController],
   providers: [
     {
       provide: ORDER_REPOSITORY,
