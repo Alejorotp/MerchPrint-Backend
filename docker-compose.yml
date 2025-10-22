@@ -1,4 +1,14 @@
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   api-gateway:
     build:
       context: .
@@ -6,6 +16,10 @@ services:
     container_name: api-gateway
     ports:
       - "3000:3000"
+    environment:
+      RMQ_URL: amqp://guest:guest@rabbitmq:5672
+    depends_on:
+      - rabbitmq
 
   auth-service:
     build:
@@ -17,8 +31,10 @@ services:
     environment:
       DB_URI: mongodb://auth_user:auth_pass@auth-service-db:27017/auth_db?authSource=admin
       JWT_SECRET: 42a50a5f631234be3f9ff00d5578b764
+      RMQ_URL: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - auth-service-db
+      - rabbitmq
 
   orders-service:
     build:
@@ -29,8 +45,10 @@ services:
       - "3002:3000"
     environment:
       DB_URI: mongodb://orders_user:orders_pass@orders-service-db:27017/orders_db?authSource=admin
+      RMQ_URL: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - orders-service-db
+      - rabbitmq
 
   companies-service:
     build:
@@ -41,8 +59,10 @@ services:
       - "3003:3000"
     environment:
       DB_URI: mongodb://companies_user:companies_pass@companies-service-db:27017/companies_db?authSource=admin
+      RMQ_URL: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - companies-service-db
+      - rabbitmq
 
   events-service:
     build:
@@ -53,11 +73,13 @@ services:
       - "3004:3000"
     environment:
       DB_URI: mongodb://events_user:events_pass@events-service-db:27017/events_db?authSource=admin
+      RMQ_URL: amqp://guest:guest@rabbitmq:5672
     depends_on:
       - events-service-db
+      - rabbitmq
 
   auth-service-db:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: auth-service-db
     restart: unless-stopped
     ports:
@@ -82,7 +104,7 @@ services:
       - orders_service_db_data:/data/db
 
   companies-service-db:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: companies-service-db
     restart: unless-stopped
     ports:
@@ -94,7 +116,7 @@ services:
       - companies_service_db_data:/data/db
 
   events-service-db:
-    image: mongo:latest
+    image: mongo:4.4
     container_name: events-service-db
     restart: unless-stopped
     ports:
