@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-service-db
+  namespace: merchprint
+  labels:
+    app: orders-service-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-service-db
+  template:
+    metadata:
+      labels:
+        app: orders-service-db
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: orders_user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: orders_pass
+            - name: MONGO_INITDB_DATABASE
+              value: orders_db
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+      volumes:
+        - name: data
+          emptyDir: {}

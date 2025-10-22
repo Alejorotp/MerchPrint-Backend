@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service
+  namespace: merchprint
+  labels:
+    app: orders-service
+spec:
+  selector:
+    app: orders-service
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

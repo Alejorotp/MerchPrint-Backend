@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service-db
+  namespace: merchprint
+  labels:
+    app: orders-service-db
+spec:
+  selector:
+    app: orders-service-db
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+  type: ClusterIP

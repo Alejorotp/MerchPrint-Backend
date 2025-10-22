@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: events-service-db
+  namespace: merchprint
+  labels:
+    app: events-service-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: events-service-db
+  template:
+    metadata:
+      labels:
+        app: events-service-db
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: events_user
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: events_pass
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+      volumes:
+        - name: data
+          emptyDir: {}
