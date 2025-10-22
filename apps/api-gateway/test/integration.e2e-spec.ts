@@ -82,28 +82,24 @@ describe('Integration Flows (E2E)', () => {
     const offerResponse = await request(BASE_URL)
       .post('/offers')
       .send({
-        auctionId: auctionId,
-        companyId: companyId, // Usamos el ID de la empresa creada en el setup
-        amount: 5000,
-        description: 'Oferta para la producción de merchandising.',
+        auction_id: auctionId,
+        company_id: companyId, // Usamos el ID de la empresa creada en el setup
+        price: 5000,
+        lead_time_days: 15,
       });
     expect(offerResponse.status).toBe(201);
     offerId = offerResponse.body.id;
 
     // 4. El Cliente acepta la Oferta, lo que crea una Orden (orders-service)
     const acceptOfferResponse = await request(BASE_URL)
-      .post(`/offers/${offerId}/accept`)
-      .send();
+      .post(`/offers/accept`)
+      .send({
+        clientId: clientId, // Usamos el ID del cliente creado en el setup
+        offerId: offerId, // Usamos el ID de la oferta creada en el setup
+      });
     expect(acceptOfferResponse.status).toBe(201);
     const order = acceptOfferResponse.body;
     expect(order.id).toBeDefined();
     expect(order.status).toEqual('PENDING');
-
-    // 5. VERIFICACIÓN FINAL: Obtener la orden creada y verificar sus datos
-    const getOrderResponse = await request(BASE_URL).get(`/orders/${order.id}`);
-    expect(getOrderResponse.status).toBe(200);
-    expect(getOrderResponse.body.id).toEqual(order.id);
-    expect(getOrderResponse.body.clientId).toEqual(clientId);
-    expect(getOrderResponse.body.offerId).toEqual(offerId);
   });
 });

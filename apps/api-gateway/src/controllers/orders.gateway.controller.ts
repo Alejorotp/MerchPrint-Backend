@@ -117,13 +117,13 @@ export class OrdersGatewayController {
     return firstValueFrom(this.ordersClient.send('offers.delete', id));
   }
 
-  @Post('offers/:id/accept')
+  @Post('offers/accept')
   @ApiOperation({ summary: 'Accept an offer' })
   @ApiResponse({ status: 201, description: 'Offer accepted and order created.' })
   @ApiResponse({ status: 404, description: 'Offer not found.' })
-  async acceptOffer(@Param('id') id: string) {
-    if (!isObjectId(id)) throw new BadRequestException('Invalid offer id');
-    return firstValueFrom(this.ordersClient.send('offers.accept', id));
+  async acceptOffer(@Body() body: any) {
+    if (!isObjectId(body.offerId)) throw new BadRequestException('Invalid offer id');
+    return firstValueFrom(this.ordersClient.send('offers.accept', { clientID: body.clientId, offerId: body.offerId }));
   }
 
   @Post('offers/:id/reject')

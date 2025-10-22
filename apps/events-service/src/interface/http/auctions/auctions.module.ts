@@ -16,6 +16,7 @@ import { Event, EventSchema } from '../../../infrastructure/mongoose/event.schem
 import { AuctionsController } from './auctions.controller';
 import { CreateAuctionUseCase } from 'apps/events-service/src/application/auctions/usecases/create-auction.usecase';
 import { EventRepositoryPort } from 'apps/events-service/src/domain/events/event.repository.port';
+import { AuctionsRmqController } from '../../rmq/auctions.rmq.controller';
 
 const useMongoose = !!process.env.DB_URI;
 
@@ -24,7 +25,7 @@ const useMongoose = !!process.env.DB_URI;
     ...(useMongoose ? [MongooseModule.forFeature([{ name: Auction.name, schema: AuctionSchema }])] : []),
     ...(useMongoose ? [MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }])] : []),
   ],
-  controllers: [AuctionsController],
+  controllers: [AuctionsController, AuctionsRmqController],
   providers: [
     {
       provide: AUCTION_REPOSITORY,

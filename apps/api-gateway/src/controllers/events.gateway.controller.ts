@@ -66,9 +66,6 @@ export class EventsGatewayController {
   @ApiOperation({ summary: 'Create an auction for an event' })
   @ApiResponse({ status: 201, description: 'Auction created successfully.' })
   async createAuction(@Body() body: any) {
-    if (!isObjectId(body.event_id)) {
-      throw new BadRequestException();
-    }
     return firstValueFrom(this.eventsClient.send('auctions.create', body));
   }
 
