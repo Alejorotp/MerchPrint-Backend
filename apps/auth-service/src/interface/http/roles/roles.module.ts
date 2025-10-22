@@ -13,6 +13,7 @@ import { DeleteRoleUseCase } from '../../../application/roles/usecases/delete-ro
 import { UpdateRoleUseCase } from '../../../application/roles/usecases/update-role.usecase';
 import { GetAllRolesUseCase } from '../../../application/roles/usecases/get-all-roles.usecase';
 import { ExistsRoleByNameUseCase, ExistsRoleByIdUseCase } from '../../../application/roles/usecases/exists-role.usecase';
+import { RolesRmqController } from '../../rmq/roles.rmq.controller';
 
 const useMongoose = !!process.env.DB_URI;
 
@@ -20,7 +21,7 @@ const useMongoose = !!process.env.DB_URI;
   imports: [
     ...(useMongoose ? [MongooseModule.forFeature([{ name: Role.name, schema: RoleSchema }])] : []),
   ],
-  controllers: [RolesController],
+  controllers: [RolesController, RolesRmqController],
   providers: [
     {
       provide: ROLE_REPOSITORY,

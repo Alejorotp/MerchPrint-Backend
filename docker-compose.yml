@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   rabbitmq:
     image: rabbitmq:3-management
@@ -79,7 +80,7 @@ services:
       - rabbitmq
 
   auth-service-db:
-    image: mongo:4.4
+    image: mongo:latest
     container_name: auth-service-db
     restart: unless-stopped
     ports:
@@ -91,7 +92,7 @@ services:
       - auth_service_db_data:/data/db
 
   orders-service-db:
-    image: mongo:4.4
+    image: mongo:latest
     container_name: orders-service-db
     restart: unless-stopped
     ports:
@@ -104,7 +105,7 @@ services:
       - orders_service_db_data:/data/db
 
   companies-service-db:
-    image: mongo:4.4
+    image: mongo:latest
     container_name: companies-service-db
     restart: unless-stopped
     ports:
@@ -116,7 +117,7 @@ services:
       - companies_service_db_data:/data/db
 
   events-service-db:
-    image: mongo:4.4
+    image: mongo:latest
     container_name: events-service-db
     restart: unless-stopped
     ports:
@@ -126,6 +127,21 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: events_pass
     volumes:
       - events_service_db_data:/data/db
+
+  api-gateway-e2e-tests:
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+      target: development
+    command: npm run test:e2e
+    environment:
+      - API_GATEWAY_URL=http://api-gateway:3000
+    depends_on:
+      - api-gateway
+      - auth-service
+      - companies-service
+      - events-service
+      - orders-service
 
 volumes:
   auth_service_db_data:
