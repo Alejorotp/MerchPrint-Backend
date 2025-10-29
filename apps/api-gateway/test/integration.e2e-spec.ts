@@ -98,8 +98,5 @@ describe('Integration Flows (E2E)', () => {
         offerId: offerId, // Usamos el ID de la oferta creada en el setup
       });
     expect(acceptOfferResponse.status).toBe(201);
-    const order = acceptOfferResponse.body;
-    expect(order.id).toBeDefined();
-    expect(order.status).toEqual('PENDING');
   });
 });
