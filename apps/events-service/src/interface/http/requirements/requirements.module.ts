@@ -12,6 +12,7 @@ import { GetRequirementsUseCase } from '../../../application/requirements/usecas
 import { UpdateRequirementsUseCase } from 'apps/events-service/src/application/requirements/usecases/update-requirements.usecase';
 import { DeleteEventUseCase } from 'apps/events-service/src/application/events/usecases/delete-event.usecase';
 import { DeleteRequirementsUseCase } from 'apps/events-service/src/application/requirements/usecases/delete-requirements.usecase';
+import { RequirementsRmqController } from '../../rmq/requirements.rmq.controller';
 
 const useMongoose = !!process.env.DB_URI;
 
@@ -19,7 +20,7 @@ const useMongoose = !!process.env.DB_URI;
     imports: [
         ...(useMongoose ? [MongooseModule.forFeature([{ name: Requirements.name, schema: RequirementsSchema }])] : []),
     ],
-    controllers: [RequirementsController],
+    controllers: [RequirementsController, RequirementsRmqController],
     providers: [
         {
             provide: REQUIREMENTS_REPOSITORY,

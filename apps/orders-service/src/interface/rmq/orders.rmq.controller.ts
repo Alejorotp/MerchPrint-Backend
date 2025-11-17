@@ -119,6 +119,9 @@ export class OrdersRmqController {
 
   @MessagePattern('offers.accept')
   async handleAcceptOffer(@Payload() data: { clientID: string; offerId: string }) {
+    if (!data.clientID || !data.offerId) {
+      throw new Error('clientID and offerId must be provided');
+    }
     const order = await this.acceptOffer.execute(data.clientID, data.offerId);
     return OrderMapper.toDTO(order);
   }
