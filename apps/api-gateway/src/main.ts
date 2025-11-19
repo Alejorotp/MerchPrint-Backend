@@ -4,6 +4,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApiGatewayModule);
+  app.enableCors({
+    origin: 'http://localhost:3005',
+    credentials: true,
+  });
+  await app.init();
   const cfg = new DocumentBuilder()
     .setTitle('Api-Gateway Service')
     .setVersion('1.0')

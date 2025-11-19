@@ -1,4 +1,5 @@
-import { Body, Controller, Post, Get, Delete, Put, Param, Inject } from '@nestjs/common';
+import { Body, Controller, Post, Get, Delete, Put, Param, Inject, BadGatewayException, BadRequestException, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -14,8 +15,28 @@ export class AuthGatewayController {
   @ApiOperation({ summary: 'Login user' })
   @ApiResponse({ status: 200, description: 'User logged in successfully.' })
   @ApiResponse({ status: 401, description: 'Invalid credentials.' })
-  async login(@Body() body: any) {
-    return firstValueFrom(this.authClient.send('auth.login', body));
+  async login(@Req() req: Request, @Body() body: any) {
+    try {
+      const pattern = 'auth.login';
+      console.debug('AuthGatewayController.login -> method:', req.method, 'url:', req.url);
+      console.debug('AuthGatewayController.login -> headers:', req.headers);
+      console.debug('AuthGatewayController.login -> sending pattern:', pattern, 'body:', body);
+
+      if (body == null) {
+        // Helpful error so client knows to send JSON with correct Content-Type
+        throw new BadRequestException(
+          'Missing request body. Ensure you send a JSON payload with `Content-Type: application/json`',
+        );
+      }
+
+      const payload = body;
+      const result = await firstValueFrom(this.authClient.send(pattern, payload));
+      return result;
+    } catch (error) {
+      console.error('Microservice communication failed:', error);
+      if (error instanceof BadRequestException) throw error;
+      throw new BadGatewayException('Microservice communication failed');
+    }
   }
 
   @Post('refresh-token')

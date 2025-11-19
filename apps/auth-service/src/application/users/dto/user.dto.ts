@@ -26,4 +26,4 @@ export class UserDTO {
         this.name = name;
         this.roleId = roleId;
     }
-}
+}   

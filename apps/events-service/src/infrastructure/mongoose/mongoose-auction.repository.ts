@@ -77,7 +77,7 @@ export class MongooseAuctionRepository implements AuctionRepositoryPort {
     return auctions.map(a => this.toEntity(a));
   }
 
-  private toEntity(doc: Auction): AuctionEntity {
+  private toEntity(doc: AuctionDocument): AuctionEntity {
     return new AuctionEntity(
       doc.id,
       doc.event_id,

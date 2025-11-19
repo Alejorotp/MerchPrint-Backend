@@ -12,6 +12,7 @@ import { RefreshTokenUseCase } from '../../application/auth/usecases/refresh-tok
 import { CreateUserDTO } from '../../application/users/dto/create-user.dto';
 import { toUserDTO } from '../../application/users/mappers/user.mapper';
 import { RefreshTokenDTO } from '../../application/auth/dto/refresh-token.dto';
+import { AuthResponseDTO } from '../../application/auth/dto/auth-response.dto';
 
 @Controller()
 export class UsersRmqController {
@@ -28,7 +29,7 @@ export class UsersRmqController {
   ) {}
 
   @MessagePattern('auth.login')
-  async login(@Payload() body: LoginDTO) {
+  async login(@Payload() body: LoginDTO): Promise<AuthResponseDTO> {
     return this.loginUseCase.execute(body);
   }
 
