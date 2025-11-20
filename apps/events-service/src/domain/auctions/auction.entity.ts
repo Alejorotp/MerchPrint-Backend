@@ -6,7 +6,7 @@ export class Auction {
   // Define properties as needed, for example:
 
   @ApiProperty({ description: 'Unique identifier for the auction' })
-  id: string;
+  id?: string;
 
   @ApiProperty({ description: 'Identifier for the associated event' })
   event_id: string;
@@ -27,7 +27,7 @@ export class Auction {
   suggested_price: number;
 
 
-  constructor( id: string, event_id: string, status: string, start_at: Date, end_at: Date, suggested_price: number, company_id?: string) {
+  constructor( event_id: string, status: string, start_at: Date, end_at: Date, suggested_price: number, company_id?: string, id?: string) {
     this.id = id;
     this.event_id = event_id;
     this.status = status;

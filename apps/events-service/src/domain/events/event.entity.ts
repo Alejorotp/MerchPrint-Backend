@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 class Event {
     @ApiProperty()
-    public  id: string
+    public  id?: string
     @ApiProperty()
     public userId: string
     @ApiProperty()
@@ -12,7 +12,7 @@ class Event {
     public  date: Date
     @ApiProperty()
     public  location: string
-    constructor(id: string, userId: string, name: string, date: Date, location: string) {
+    constructor(userId: string, name: string, date: Date, location: string, id?: string) {
         this.id = id;
         this.userId = userId;
         this.name = name;

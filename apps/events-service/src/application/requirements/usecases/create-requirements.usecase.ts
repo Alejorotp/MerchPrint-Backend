@@ -11,7 +11,6 @@ export class CreateRequirementsUseCase {
   constructor(private readonly requirementsRepo: RequirementsRepositoryPort) {}
   async execute(input: CreateRequirementsDTO): Promise<RequirementsDTO> {
     const requirements = new Requirements(
-      randomUUID(),
       input.eventId,
       input.description,
       input.quantity,

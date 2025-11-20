@@ -11,18 +11,18 @@ export class MongooseEventRepository implements EventRepositoryPort {
     async save(event: EventEntity): Promise<EventEntity> {
     const createdEvent = new this.eventModel(event);
     const saved = await createdEvent.save();
-    return new EventEntity(saved.id, saved.userId, saved.name, saved.date, saved.location);
+    return new EventEntity(saved.userId, saved.name, saved.date, saved.location, saved.id);
   }
     async findById(id: string): Promise<EventEntity | null> {
     const event = await this.eventModel.findById(id).exec();
     if (!event) {
       return null;
     }
-    return new EventEntity(event.id, event.userId, event.name, event.date, event.location);
+    return new EventEntity(event.userId, event.name, event.date, event.location, event.id);
     }
     async findAll(): Promise<EventEntity[]> {
     const events = await this.eventModel.find().exec();
-    return events.map(event => new EventEntity(event.id, event.userId, event.name, event.date, event.location));
+    return events.map(event => new EventEntity(event.userId, event.name, event.date, event.location, event.id));
     }
     async existsByTitle(title: string): Promise<boolean> {
     const count = await this.eventModel.countDocuments({ name: title }).exec();
@@ -40,7 +40,7 @@ export class MongooseEventRepository implements EventRepositoryPort {
     if (!event) {
       return null;
     }
-    return new EventEntity(event.id, event.userId, event.name, event.date, event.location);
+    return new EventEntity(event.userId, event.name, event.date, event.location, event.id);
     }
 
     async update(event: EventEntity): Promise<EventEntity> {
@@ -48,19 +48,19 @@ export class MongooseEventRepository implements EventRepositoryPort {
     if (!updated) {
       throw new Error('Event not found');
     }
-    return new EventEntity(updated.id, updated.userId, updated.name, updated.date, updated.location);
+    return new EventEntity(updated.userId, updated.name, updated.date, updated.location, updated.id);
     }
     async findByDate(date: Date): Promise<EventEntity[]> {
     const events = await this.eventModel.find({ date }).exec();
-    return events.map(event => new EventEntity(event.id, event.userId, event.name, event.date, event.location));
+    return events.map(event => new EventEntity(event.userId, event.name, event.date, event.location, event.id));
     }
     async findByLocation(location: string): Promise<EventEntity[]> {
     const events = await this.eventModel.find({ location }).exec();
-    return events.map(event => new EventEntity(event.id, event.userId, event.name, event.date, event.location));
+    return events.map(event => new EventEntity(event.userId, event.name, event.date, event.location, event.id));
     }
     async findByUserId(userId: string): Promise<EventEntity[]> {
     const events = await this.eventModel.find({ userId: userId }).exec();
-    return events.map(event => new EventEntity(event.id, event.userId, event.name, event.date, event.location));
+    return events.map(event => new EventEntity(event.userId, event.name, event.date, event.location, event.id));
     }
     async count(): Promise<number> {
     return this.eventModel.countDocuments().exec();

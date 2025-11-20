@@ -17,13 +17,13 @@ export class CreateAuctionUseCase {
         const eventExists = await this.eventRepo.findById(input.event_id);
         if (!eventExists) throw new Error('Event does not exist');
         const auction = new Auction(
-            randomUUID(),
             input.event_id,
             'pending',
             new Date(input.start_at),
             new Date(input.end_at),
             input.suggested_price,
-            input.company_id ? input.company_id : ''
+            input.company_id ? input.company_id : '',
+            randomUUID()
         );
         const savedAuction = await this.auctionRepo.save(auction);
         return toAuctionDTO(savedAuction);

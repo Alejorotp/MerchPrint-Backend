@@ -6,6 +6,10 @@ export type AuctionDocument = HydratedDocument<Auction>;
 
 @Schema()
 export class Auction {
+  @ApiProperty({ description: 'Unique identifier for the auction' })
+  @Prop({ required: true, unique: true })
+  id: string;
+
   @ApiProperty({ description: 'Identifier for the associated event' })
   @Prop({ required: true })
   event_id: string;

@@ -18,33 +18,33 @@ export class MongooseRequirementsRepository
     const createdRequirements = new this.requirementsModel(requirements);
     const savedRequirements = await createdRequirements.save();
     return new RequirementsEntity(
-      savedRequirements.id,
       savedRequirements.eventId,
       savedRequirements.description,
       savedRequirements.quantity,
       savedRequirements.specs_json,
+      savedRequirements.id,
     );
   }
   async create(dto: CreateRequirementsDTO): Promise<RequirementsEntity> {
     const createdRequirements = new this.requirementsModel(dto);
     const savedRequirements = await createdRequirements.save();
     return new RequirementsEntity(
-      savedRequirements.id,
       savedRequirements.eventId,
       savedRequirements.description,
       savedRequirements.quantity,
       savedRequirements.specs_json,
+      savedRequirements.id,
     );
   }
   async findById(id: string): Promise<RequirementsEntity | null> {
     const found = await this.requirementsModel.findById(id).exec();
     if (!found) return null;
     return new RequirementsEntity(
-      found.id,
       found.eventId,
       found.description,
       found.quantity,
       found.specs_json,
+      found.id,
     );
   }
   async findAll(): Promise<RequirementsEntity[]> {
@@ -52,11 +52,11 @@ export class MongooseRequirementsRepository
     return found.map(
       (req) =>
         new RequirementsEntity(
-          req.id,
           req.eventId,
           req.description,
           req.quantity,
           req.specs_json,
+          req.id,
         ),
     );
   }
@@ -65,11 +65,11 @@ export class MongooseRequirementsRepository
     return found.map(
       (req) =>
         new RequirementsEntity(
-          req.id,
           req.eventId,
           req.description,
           req.quantity,
           req.specs_json,
+          req.id,
         ),
     );
   }
@@ -91,11 +91,11 @@ export class MongooseRequirementsRepository
       .exec();
     if (!updated) throw new Error('Requirements not found');
     return new RequirementsEntity(
-      updated.id,
       updated.eventId,
       updated.description,
       updated.quantity,
       updated.specs_json,
+      updated.id,
     );
   }
 

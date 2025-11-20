@@ -12,7 +12,7 @@ export class CreateEventUseCase {
     async execute(input: CreateEventDTO): Promise<eventDTO> {
         const titleTaken = await this.eventRepo.existsByTitle(input.name);
         if (titleTaken) throw new Error('Event title already in use');
-        const event = new Event(randomUUID(), input.userId, input.name, input.date, input.location);
+        const event = new Event(input.userId, input.name, input.date, input.location);
         const savedEvent = await this.eventRepo.save(event);
         return toEventDTO(savedEvent);
         

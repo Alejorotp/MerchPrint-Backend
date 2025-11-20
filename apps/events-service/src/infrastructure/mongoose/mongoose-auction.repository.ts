@@ -79,13 +79,13 @@ export class MongooseAuctionRepository implements AuctionRepositoryPort {
 
   private toEntity(doc: AuctionDocument): AuctionEntity {
     return new AuctionEntity(
-      doc.id,
       doc.event_id,
       doc.status,
       doc.start_at,
       doc.end_at,
       doc.suggested_price,
-      doc.company_id
+      doc.company_id,
+      doc.id
     );
   }
 }

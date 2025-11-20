@@ -12,7 +12,7 @@ export class InMemoryRequirementsRepository implements RequirementsRepositoryPor
         return requirements;
     }
     async create(dto: CreateRequirementsDTO): Promise<Requirements> {
-        const newRequirements = new Requirements(randomUUID(), dto.eventId, dto.description, dto.quantity, dto.specs_json);
+        const newRequirements = new Requirements(dto.eventId, dto.description, dto.quantity, dto.specs_json, randomUUID());
         this.requirements.push(newRequirements);
         return newRequirements;
     }
