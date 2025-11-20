@@ -25,9 +25,8 @@ export class RequirementsRmqController {
 
   @MessagePattern('requirements.getByEventId')
   async getByEventId(@Payload() eventId: string) {
-    const requirements = await this.getRequirements.execute(eventId);
-    if (!requirements) return null;
-    return toRequirementsDTO(requirements);
+    const requirements = await this.getRequirements.executeByEventId(eventId);  // Busca por eventId
+    return requirements;  // Retorna array mapeado
   }
 
   @MessagePattern('requirements.update')
