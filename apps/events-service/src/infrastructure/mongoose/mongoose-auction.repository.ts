@@ -10,7 +10,7 @@ import { Auction as AuctionEntity } from '../../domain/auctions/auction.entity';
 export class MongooseAuctionRepository implements AuctionRepositoryPort {
   constructor(
     @InjectModel(Auction.name) private auctionModel: Model<AuctionDocument>
-  ) {}
+  ) { }
 
   async save(auction: AuctionEntity): Promise<AuctionEntity> {
     const created = new this.auctionModel(auction);
@@ -19,7 +19,7 @@ export class MongooseAuctionRepository implements AuctionRepositoryPort {
   }
 
   async findById(id: string): Promise<AuctionEntity | null> {
-    const found = await this.auctionModel.findOne({ id }).exec();
+    const found = await this.auctionModel.findById(id).exec();
     return found ? this.toEntity(found) : null;
   }
 
@@ -43,12 +43,12 @@ export class MongooseAuctionRepository implements AuctionRepositoryPort {
   }
 
   async deleteById(id: string): Promise<void> {
-    await this.auctionModel.deleteOne({ id }).exec();
+    await this.auctionModel.findByIdAndDelete(id).exec();
   }
 
   async update(auction: AuctionEntity): Promise<AuctionEntity> {
-    const updated = await this.auctionModel.findOneAndUpdate(
-      { id: auction.id },
+    const updated = await this.auctionModel.findByIdAndUpdate(
+      auction.id,
       {
         event_id: auction.event_id,
         status: auction.status,
@@ -85,7 +85,7 @@ export class MongooseAuctionRepository implements AuctionRepositoryPort {
       doc.end_at,
       doc.suggested_price,
       doc.company_id,
-      doc.id
+      doc._id.toString()
     );
   }
 }
