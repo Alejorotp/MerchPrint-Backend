@@ -5,6 +5,7 @@ import { GetAllCompaniesUseCase } from '../../application/companies/usecases/get
 import { GetCompanyUseCase } from '../../application/companies/usecases/get-company.usecase';
 import { UpdateCompanyUseCase } from '../../application/companies/usecases/update-company.usecase';
 import { DeleteCompanyUseCase } from '../../application/companies/usecases/delete-company.usecase';
+import { GetCompanyByUserIdUseCase } from '../../application/companies/usecases/get-company-by-user-id.usecase';
 import { CreateCompanyDTO } from '../../application/companies/dto/create-company.dto';
 import { UpdateCompanyDTO } from '../../application/companies/dto/update-company.dto';
 import { toCompanyDTO } from '../../application/companies/mappers/company.mapper';
@@ -17,7 +18,8 @@ export class CompaniesRmqController {
     private readonly getCompany: GetCompanyUseCase,
     private readonly updateCompany: UpdateCompanyUseCase,
     private readonly deleteCompany: DeleteCompanyUseCase,
-  ) {}
+    private readonly getCompanyByUserId: GetCompanyByUserIdUseCase,
+  ) { }
 
   @MessagePattern('companies.create')
   async create(@Payload() data: CreateCompanyDTO) {
@@ -34,6 +36,13 @@ export class CompaniesRmqController {
   @MessagePattern('companies.getById')
   async getById(@Payload() id: string) {
     const company = await this.getCompany.execute(id);
+    if (!company) return null;
+    return toCompanyDTO(company);
+  }
+
+  @MessagePattern('companies.getByUserId')
+  async getByUserId(@Payload() userId: string) {
+    const company = await this.getCompanyByUserId.execute(userId);
     if (!company) return null;
     return toCompanyDTO(company);
   }

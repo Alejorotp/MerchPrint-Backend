@@ -12,7 +12,7 @@ export class MongooseCompanyRepository implements CompanyRepositoryPort {
     constructor(
         @InjectModel(CompanySchema.name)
         private readonly companyModel: Model<CompanyDocument>,
-    ) {}
+    ) { }
 
     async save(company: Company): Promise<Company> {
         const createdCompany = new this.companyModel(company);
@@ -43,5 +43,9 @@ export class MongooseCompanyRepository implements CompanyRepositoryPort {
 
     async update(id: string, update: Partial<Company>): Promise<Company | null> {
         return this.companyModel.findByIdAndUpdate(id, update, { new: true }).exec();
+    }
+
+    async findByUserId(userId: string): Promise<Company | null> {
+        return this.companyModel.findOne({ userId }).exec();
     }
 }

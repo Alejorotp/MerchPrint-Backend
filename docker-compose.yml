@@ -47,6 +47,7 @@ services:
     environment:
       DB_URI: mongodb://orders_user:orders_pass@orders-service-db:27017/orders_db?authSource=admin
       RMQ_URL: amqp://guest:guest@rabbitmq:5672
+      GENERATE_IMAGE_API_KEY: AIzaSyANgJ6pjprwXkb99K9rEty5Ol9VT0Vcl3I
     depends_on:
       - orders-service-db
       - rabbitmq

@@ -9,7 +9,7 @@ export class CompaniesGatewayController {
   constructor(
     @Inject('COMPANIES_SERVICE')
     private readonly companiesClient: ClientProxy,
-  ) {}
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new company' })
@@ -31,6 +31,14 @@ export class CompaniesGatewayController {
   @ApiResponse({ status: 404, description: 'Company not found.' })
   async getCompanyById(@Param('id') id: string) {
     return firstValueFrom(this.companiesClient.send('companies.getById', id));
+  }
+
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Get a company by User ID' })
+  @ApiResponse({ status: 200, description: 'Company found.' })
+  @ApiResponse({ status: 404, description: 'Company not found.' })
+  async getCompanyByUserId(@Param('userId') userId: string) {
+    return firstValueFrom(this.companiesClient.send('companies.getByUserId', userId));
   }
 
   @Put(':id')

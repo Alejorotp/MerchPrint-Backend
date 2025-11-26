@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CreateOrderUseCase } from '../../../application/usecases/create-order.usecase';
 import { CreateOfferUseCase } from '../../../application/usecases/create-offer.usecase';
 import { AcceptOfferUseCase } from '../../../application/usecases/accept-offer.usecase';
@@ -14,6 +15,8 @@ import { GetOffersByCompanyUseCase } from '../../../application/usecases/get-off
 import { DeleteOrderUseCase } from '../../../application/usecases/delete-order.usecase';
 import { UpdateOfferUseCase } from '../../../application/usecases/update-offer.usecase';
 import { DeleteOfferUseCase } from '../../../application/usecases/delete-offer.usecase';
+import { GenerateAIImageUseCase } from '../../../application/usecases/generate-ai-image.usecase';
+import { GetOrderByOfferIdUseCase } from '../../../application/usecases/get-order-by-offer-id.usecase';
 import {
   ORDER_REPOSITORY,
   OFFER_REPOSITORY,
@@ -39,12 +42,23 @@ const useMongoose = !!process.env.DB_URI;
   imports: [
     ...(useMongoose
       ? [
-          MongooseModule.forFeature([
-            { name: OrderDocument.name, schema: OrderSchema },
-            { name: OfferDocument.name, schema: OfferSchema },
-          ]),
-        ]
+        MongooseModule.forFeature([
+          { name: OrderDocument.name, schema: OrderSchema },
+          { name: OfferDocument.name, schema: OfferSchema },
+        ]),
+      ]
       : []),
+    ClientsModule.register([
+      {
+        name: 'EVENTS_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL || 'amqp://guest:guest@localhost:5672'],
+          queue: 'events_queue',
+          queueOptions: { durable: false },
+        },
+      },
+    ]),
   ],
   controllers: [OrdersController, OrdersRmqController],
   providers: [
@@ -127,6 +141,12 @@ const useMongoose = !!process.env.DB_URI;
       useFactory: (offerRepo: any) => new DeleteOfferUseCase(offerRepo),
       inject: [OFFER_REPOSITORY],
     },
+    {
+      provide: GetOrderByOfferIdUseCase,
+      useFactory: (orderRepo: any) => new GetOrderByOfferIdUseCase(orderRepo),
+      inject: [ORDER_REPOSITORY],
+    },
+    GenerateAIImageUseCase,
   ],
 })
-export class OrdersHttpModule {}
+export class OrdersHttpModule { }

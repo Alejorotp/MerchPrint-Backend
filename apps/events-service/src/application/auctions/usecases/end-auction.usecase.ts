@@ -1,7 +1,7 @@
 // end-auction.usecase.ts
 
 import { Inject } from "@nestjs/common";
-import type { AuctionRepositoryPort } from "../../../domain/auctions/auction.repository.port";  
+import type { AuctionRepositoryPort } from "../../../domain/auctions/auction.repository.port";
 import type { EventRepositoryPort } from "../../../domain/events/event.repository.port";
 import { AuctionDTO } from "../dto/auction.dto";
 import { toAuctionDTO } from "../mappers/auction.mapper";
@@ -13,11 +13,11 @@ export class EndAuctionUseCase {
         private readonly auctionRepo: AuctionRepositoryPort,
         @Inject('EventRepositoryPort')
         private readonly eventRepo: EventRepositoryPort
-    ) {}
-    async execute(event_id: string): Promise<AuctionDTO | null> {
-        const existingAuction = await this.auctionRepo.findByEventId(event_id);
+    ) { }
+    async execute(auction_id: string): Promise<AuctionDTO | null> {
+        const existingAuction = await this.auctionRepo.findById(auction_id);
         if (!existingAuction) {
-            throw new Error('Auction not found for the given event_id');
+            throw new Error('Auction not found for the given auction_id');
         }
         if (existingAuction.status === 'completed') {
             throw new Error('Auction is already completed');
@@ -31,4 +31,4 @@ export class EndAuctionUseCase {
         await this.auctionRepo.update(existingAuction);
         return toAuctionDTO(existingAuction);
     }
-    }
+}

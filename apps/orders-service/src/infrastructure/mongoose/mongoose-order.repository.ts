@@ -10,7 +10,7 @@ export class MongooseOrderRepository implements OrderRepositoryPort {
   constructor(
     @InjectModel(OrderDocument.name)
     private readonly orderModel: Model<OrderDocument>,
-  ) {}
+  ) { }
 
   private toDomain(orderDoc: OrderDocument): Order {
     return new Order(
@@ -38,6 +38,11 @@ export class MongooseOrderRepository implements OrderRepositoryPort {
       .find({ client_id: clientId })
       .exec();
     return orderDocs.map((doc) => this.toDomain(doc));
+  }
+
+  async findByOfferId(offerId: string): Promise<Order | null> {
+    const orderDoc = await this.orderModel.findOne({ offer_id: offerId }).exec();
+    return orderDoc ? this.toDomain(orderDoc) : null;
   }
 
   async findByStatus(status: OrderStatus): Promise<Order[]> {

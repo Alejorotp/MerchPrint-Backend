@@ -10,4 +10,5 @@ export interface CompanyRepositoryPort {
     existsByName(name: string): Promise<boolean>;
     existsById(id: string): Promise<boolean>;
     update(id: string, update: Partial<Company>): Promise<Company | null>;
+    findByUserId(userId: string): Promise<Company | null>;
 }

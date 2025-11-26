@@ -41,7 +41,7 @@ import { UpdateOfferDTO } from '../../../application/dto/update-offer.dto';
 import { OrderDTO } from '../../../application/dto/order.dto';
 import { OrderMapper } from '../../../application/mappers/order.mapper';
 import { OfferMapper } from '../../../application/mappers/offer.mapper';
-import { GoogleGenAI } from '@google/genai';
+import { GenerateAIImageUseCase } from '../../../application/usecases/generate-ai-image.usecase';
 import type { Response } from 'express';
 
 @ApiTags('orders')
@@ -62,7 +62,8 @@ export class OrdersController {
     private readonly deleteOrderUseCase: DeleteOrderUseCase,
     private readonly updateOfferUseCase: UpdateOfferUseCase,
     private readonly deleteOfferUseCase: DeleteOfferUseCase,
-  ) {}
+    private readonly generateAIImageUseCase: GenerateAIImageUseCase,
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Crear una nueva orden' })
@@ -251,61 +252,11 @@ export class OrdersController {
     @Body('prompt') prompt: string,
     @Res() res: Response,
   ) {
-    if (!prompt || typeof prompt !== 'string') {
-      throw new HttpException('prompt is required', HttpStatus.BAD_REQUEST);
-    }
-
-    const apiKey = process.env.GENERATE_IMAGE_API_KEY;
-    if (!apiKey) {
-      throw new HttpException(
-        'AI service not configured',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
     try {
-      const ai = new GoogleGenAI({ apiKey });
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash-image',
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: prompt }],
-          },
-        ],
-      });
-
-      const candidates = response.candidates || [];
-      for (const cand of candidates) {
-        if (!cand.content?.parts) continue;
-        for (const part of cand.content.parts) {
-          const anyPart = part as any;
-          if (anyPart.inlineData) {
-            const inline = anyPart.inlineData as {
-              data: string;
-              mimeType?: string;
-            };
-            const mime = inline.mimeType || 'image/png';
-            const b64 = inline.data;
-            const buffer = Buffer.from(b64, 'base64');
-            res.setHeader('Content-Type', mime);
-            res.setHeader('Cache-Control', 'no-store, max-age=0');
-            return res.send(buffer);
-          }
-        }
-      }
-
-      const text = candidates
-        .filter((c) => c.content)
-        .flatMap((c) => c.content!.parts)
-        .map((p: any) => p.text)
-        .filter(Boolean)
-        .join('\n');
-
-      throw new HttpException(
-        text || 'No image generated',
-        HttpStatus.BAD_GATEWAY,
-      );
+      const { mime, data } = await this.generateAIImageUseCase.execute(prompt);
+      res.setHeader('Content-Type', mime);
+      res.setHeader('Cache-Control', 'no-store, max-age=0');
+      return res.send(data);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'AI error';
       throw new HttpException(message, HttpStatus.INTERNAL_SERVER_ERROR);

@@ -14,7 +14,7 @@ export class AuctionsRmqController {
     private readonly getAuction: GetAuctionUseCase,
     private readonly cancelAuction: CancelAuctionUseCase,
     private readonly endAuction: EndAuctionUseCase,
-  ) {}
+  ) { }
 
   @MessagePattern('auctions.create')
   async create(@Payload() data: CreateAuctionDTO) {
@@ -31,6 +31,7 @@ export class AuctionsRmqController {
 
   @MessagePattern('auctions.getByEventId')
   async getByEventId(@Payload() event_id: string) {
+    console.log(event_id)
     const auction = await this.getAuction.execute(event_id);
     if (!auction) return null;
     return toAuctionDTO(auction);

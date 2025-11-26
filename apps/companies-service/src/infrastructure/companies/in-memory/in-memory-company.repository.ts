@@ -39,4 +39,8 @@ export class InMemoryCompanyRepository implements CompanyRepositoryPort {
         this.companies[index] = updatedCompany;
         return updatedCompany;
     }
+
+    async findByUserId(userId: string): Promise<Company | null> {
+        return this.companies.find(company => company.userId === userId) || null;
+    }
 }

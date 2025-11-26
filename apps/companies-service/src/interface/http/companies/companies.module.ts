@@ -13,6 +13,7 @@ import { GetCompanyUseCase } from '../../../application/companies/usecases/get-c
 import { UpdateCompanyUseCase } from '../../../application/companies/usecases/update-company.usecase';
 import { DeleteCompanyUseCase } from '../../../application/companies/usecases/delete-company.usecase';
 import { GetAllCompaniesUseCase } from '../../../application/companies/usecases/get-all-companies.usecase';
+import { GetCompanyByUserIdUseCase } from '../../../application/companies/usecases/get-company-by-user-id.usecase';
 import {
   ExistsCompanyByNameUseCase,
   ExistsCompanyByIdUseCase,
@@ -27,10 +28,10 @@ const useMongoose = !!process.env.DB_URI;
   imports: [
     ...(useMongoose
       ? [
-          MongooseModule.forFeature([
-            { name: Company.name, schema: CompanySchema },
-          ]),
-        ]
+        MongooseModule.forFeature([
+          { name: Company.name, schema: CompanySchema },
+        ]),
+      ]
       : []),
   ],
   controllers: [CompaniesController, CompaniesRmqController],
@@ -76,6 +77,11 @@ const useMongoose = !!process.env.DB_URI;
       useFactory: (repo: any) => new ExistsCompanyByIdUseCase(repo),
       inject: [COMPANY_REPOSITORY],
     },
+    {
+      provide: GetCompanyByUserIdUseCase,
+      useFactory: (repo: any) => new GetCompanyByUserIdUseCase(repo),
+      inject: [COMPANY_REPOSITORY],
+    },
   ],
 })
-export class CompaniesHttpModule {}
+export class CompaniesHttpModule { }

@@ -1,5 +1,5 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, Inject } from '@nestjs/common';
+import { MessagePattern, Payload, ClientProxy } from '@nestjs/microservices';
 import { AcceptOfferUseCase } from '../../application/usecases/accept-offer.usecase';
 import { CancelOrderUseCase } from '../../application/usecases/cancel-order.usecase';
 import { CreateOfferUseCase } from '../../application/usecases/create-offer.usecase';
@@ -14,6 +14,8 @@ import { GetOrdersByClientUseCase } from '../../application/usecases/get-orders-
 import { RejectOfferUseCase } from '../../application/usecases/reject-offer.usecase';
 import { UpdateOfferUseCase } from '../../application/usecases/update-offer.usecase';
 import { UpdateOrderStatusUseCase } from '../../application/usecases/update-order-status.usecase';
+import { GenerateAIImageUseCase } from '../../application/usecases/generate-ai-image.usecase';
+import { GetOrderByOfferIdUseCase } from '../../application/usecases/get-order-by-offer-id.usecase';
 import { OrderMapper } from '../../application/mappers/order.mapper';
 import { OfferMapper } from '../../application/mappers/offer.mapper';
 import { CreateOrderDTO } from '../../application/dto/create-order.dto';
@@ -41,7 +43,10 @@ export class OrdersRmqController {
     private readonly deleteOffer: DeleteOfferUseCase,
     private readonly acceptOffer: AcceptOfferUseCase,
     private readonly rejectOffer: RejectOfferUseCase,
-  ) {}
+    private readonly generateAIImage: GenerateAIImageUseCase,
+    private readonly getOrderByOfferId: GetOrderByOfferIdUseCase,
+    @Inject('EVENTS_SERVICE') private readonly eventsClient: ClientProxy,
+  ) { }
 
   // Order Patterns
   @MessagePattern('orders.create')
@@ -78,6 +83,18 @@ export class OrdersRmqController {
   async handleDeleteOrder(@Payload() id: string) {
     await this.deleteOrder.execute(id);
     return { message: 'Order deleted successfully' };
+  }
+
+  @MessagePattern('orders.generateAIImage')
+  async handleGenerateAIImage(@Payload() prompt: string) {
+    const { mime, data } = await this.generateAIImage.execute(prompt);
+    return { mime, data: data.toString('base64') };
+  }
+
+  @MessagePattern('orders.getByOfferId')
+  async handleGetOrderByOfferId(@Payload() offerId: string) {
+    const order = await this.getOrderByOfferId.execute(offerId);
+    return order ? OrderMapper.toDTO(order) : null;
   }
 
   // Offer Patterns
@@ -122,7 +139,18 @@ export class OrdersRmqController {
     if (!data.clientID || !data.offerId) {
       throw new Error('clientID and offerId must be provided');
     }
+
+    // Get offer to find auctionId
+    const offer = await this.getOfferById.execute(data.offerId);
+    if (!offer) {
+      throw new Error('Offer not found');
+    }
+
     const order = await this.acceptOffer.execute(data.clientID, data.offerId);
+
+    // End the auction
+    this.eventsClient.emit('auctions.end', offer.auction_id);
+
     return OrderMapper.toDTO(order);
   }
 

@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Inject, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Inject, BadRequestException, Res } from '@nestjs/common';
+import type { Response } from 'express';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -12,7 +13,7 @@ function isObjectId(id: string) {
 export class OrdersGatewayController {
   constructor(
     @Inject('ORDERS_SERVICE') private readonly ordersClient: ClientProxy,
-  ) {}
+  ) { }
 
   // Orders Endpoints
   @Post('orders')
@@ -20,6 +21,20 @@ export class OrdersGatewayController {
   @ApiResponse({ status: 201, description: 'Order created successfully.' })
   async createOrder(@Body() body: any) {
     return firstValueFrom(this.ordersClient.send('orders.create', body));
+  }
+
+  @Post('orders/ai-image')
+  @ApiOperation({ summary: 'Generate AI Image' })
+  @ApiResponse({ status: 200, description: 'Image generated successfully.' })
+  async generateAIImage(@Body('prompt') prompt: string, @Res() res: Response) {
+    if (!prompt) throw new BadRequestException('Prompt is required');
+    const response = await firstValueFrom(
+      this.ordersClient.send('orders.generateAIImage', prompt),
+    );
+    const buffer = Buffer.from(response.data, 'base64');
+    res.setHeader('Content-Type', response.mime);
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
+    res.send(buffer);
   }
 
   @Get('orders/:id')
@@ -31,12 +46,19 @@ export class OrdersGatewayController {
     return firstValueFrom(this.ordersClient.send('orders.getById', id));
   }
 
-  @Get('clients/:clientId/orders')
-  @ApiOperation({ summary: 'Get all orders for a client' })
-  @ApiResponse({ status: 200, description: 'List of orders for the client.' })
+  @Get('orders/client/:clientId')
+  @ApiOperation({ summary: 'Get orders by client ID' })
+  @ApiResponse({ status: 200, description: 'Return orders.' })
   async getOrdersByClient(@Param('clientId') clientId: string) {
-    if (!isObjectId(clientId)) throw new BadRequestException('Invalid client id');
     return firstValueFrom(this.ordersClient.send('orders.getByClientId', clientId));
+  }
+
+  @Get('orders/offer/:offerId')
+  @ApiOperation({ summary: 'Get order by offer ID' })
+  @ApiResponse({ status: 200, description: 'Return order.' })
+  @ApiResponse({ status: 404, description: 'Order not found.' })
+  async getOrderByOfferId(@Param('offerId') offerId: string) {
+    return firstValueFrom(this.ordersClient.send('orders.getByOfferId', offerId));
   }
 
   @Put('orders/:id/status')
@@ -117,13 +139,14 @@ export class OrdersGatewayController {
     return firstValueFrom(this.ordersClient.send('offers.delete', id));
   }
 
-  @Post('offers/accept')
+  @Post('offers/:offerId/accept')
   @ApiOperation({ summary: 'Accept an offer' })
   @ApiResponse({ status: 201, description: 'Offer accepted and order created.' })
   @ApiResponse({ status: 404, description: 'Offer not found.' })
-  async acceptOffer(@Body() body: any) {
-    if (!isObjectId(body.offerId)) throw new BadRequestException('Invalid offer id');
-    return firstValueFrom(this.ordersClient.send('offers.accept', { clientID: body.clientId, offerId: body.offerId }));
+  async acceptOffer(@Param('offerId') offerId: string, @Body() body: any) {
+    if (!isObjectId(offerId)) throw new BadRequestException('Invalid offer id');
+    console.log(body.clientID, offerId);
+    return firstValueFrom(this.ordersClient.send('offers.accept', { clientID: body.clientID, offerId: offerId }));
   }
 
   @Post('offers/:id/reject')

@@ -26,7 +26,7 @@ export class AuctionsController {
     private readonly cancelAuctionUseCase: CancelAuctionUseCase,
     private readonly endAuctionUseCase: EndAuctionUseCase,
     private readonly createAuctionUseCase: CreateAuctionUseCase,
-  ) {}
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new auction' })
@@ -206,18 +206,18 @@ export class AuctionsController {
     }
   }
 
-  @Post('end/:event_id')
-  @ApiOperation({ summary: 'End auction by event ID' })
+  @Post('end/:id')
+  @ApiOperation({ summary: 'End auction by ID' })
   @ApiResponse({
     status: 200,
     description: 'The auction has been successfully ended.',
     type: AuctionDTO,
   })
   async endAuction(
-    @Param('event_id') event_id: string,
+    @Param('id') id: string,
   ): Promise<AuctionDTO | null> {
     try {
-      return await this.endAuctionUseCase.execute(event_id);
+      return await this.endAuctionUseCase.execute(id);
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

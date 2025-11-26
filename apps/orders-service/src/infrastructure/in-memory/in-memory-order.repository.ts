@@ -27,6 +27,10 @@ export class InMemoryOrderRepository implements OrderRepositoryPort {
     return this.orders.filter((order) => order.client_id === clientId);
   }
 
+  async findByOfferId(offerId: string): Promise<Order | null> {
+    return this.orders.find((order) => order.offer_id === offerId) || null;
+  }
+
   async findByStatus(status: OrderStatus): Promise<Order[]> {
     return this.orders.filter((order) => order.status === status);
   }
