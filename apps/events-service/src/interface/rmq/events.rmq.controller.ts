@@ -15,7 +15,7 @@ export class EventsRmqController {
     private readonly getEvents: GetEventsUseCase,
     private readonly updateEvent: UpdateEventUseCase,
     private readonly deleteEvent: DeleteEventUseCase,
-  ) {}
+  ) { }
 
   @MessagePattern('events.create')
   async create(@Payload() data: CreateEventDTO) {
@@ -48,4 +48,11 @@ export class EventsRmqController {
     await this.deleteEvent.execute(id);
     return { message: 'Event deleted successfully' };
   }
+
+  @MessagePattern('events.getByUserId')
+  async getByUserId(@Payload() user_id: string) {
+    const events = await this.getEvents.executeByUserId(user_id);
+    return events.map(toEventDTO);
+  }
+
 }

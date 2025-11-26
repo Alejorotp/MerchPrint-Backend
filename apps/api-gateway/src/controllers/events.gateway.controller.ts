@@ -12,7 +12,7 @@ function isObjectId(id: string) {
 export class EventsGatewayController {
   constructor(
     @Inject('EVENTS_SERVICE') private readonly eventsClient: ClientProxy,
-  ) {}
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new event' })
@@ -26,39 +26,6 @@ export class EventsGatewayController {
   @ApiResponse({ status: 200, description: 'List of all events.' })
   async getAllEvents() {
     return firstValueFrom(this.eventsClient.send('events.getAll', {}));
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get an event by ID' })
-  @ApiResponse({ status: 200, description: 'Event found.' })
-  @ApiResponse({ status: 404, description: 'Event not found.' })
-  async getById(@Param('id') id: string) {
-    if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
-    }
-    return firstValueFrom(this.eventsClient.send('events.getById', id));
-  }
-
-  @Put(':id')
-  @ApiOperation({ summary: 'Update an event by ID' })
-  @ApiResponse({ status: 200, description: 'Event updated successfully.' })
-  @ApiResponse({ status: 404, description: 'Event not found.' })
-  async updateEvent(@Param('id') id: string, @Body() body: any) {
-    if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
-    }
-    return firstValueFrom(this.eventsClient.send('events.update', { id, body }));
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete an event by ID' })
-  @ApiResponse({ status: 200, description: 'Event deleted successfully.' })
-  @ApiResponse({ status: 404, description: 'Event not found.' })
-  async deleteEvent(@Param('id') id: string) {
-    if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
-    }
-    return firstValueFrom(this.eventsClient.send('events.delete', id));
   }
 
   // Auction Endpoints
@@ -75,7 +42,7 @@ export class EventsGatewayController {
   @ApiResponse({ status: 404, description: 'Auction not found.' })
   async getAuctionById(@Param('id') id: string) {
     if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException('3Invalid id');
     }
     return firstValueFrom(this.eventsClient.send('auctions.getById', id));
   }
@@ -86,7 +53,7 @@ export class EventsGatewayController {
   @ApiResponse({ status: 404, description: 'Auction not found.' })
   async cancelAuction(@Param('id') id: string) {
     if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException('2Invalid id');
     }
     return firstValueFrom(this.eventsClient.send('auctions.cancel', id));
   }
@@ -97,9 +64,20 @@ export class EventsGatewayController {
   @ApiResponse({ status: 404, description: 'Auction not found.' })
   async endAuction(@Param('id') id: string) {
     if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException('1Invalid id');
     }
     return firstValueFrom(this.eventsClient.send('auctions.end', id));
+  }
+
+  @Get('auctions/event/:eventId')
+  @ApiOperation({ summary: 'Get an auction by event ID' })
+  @ApiResponse({ status: 200, description: 'Auction found.' })
+  @ApiResponse({ status: 404, description: 'Auction not found.' })
+  async getAuctionByEventId(@Param('eventId') eventId: string) {
+    if (!isObjectId(eventId)) {
+      throw new BadRequestException('Invalid eventId');
+    }
+    return firstValueFrom(this.eventsClient.send('auctions.getByEventId', eventId));
   }
 
   // Requirements Endpoints
@@ -131,7 +109,7 @@ export class EventsGatewayController {
   @ApiResponse({ status: 404, description: 'Requirements not found.' })
   async updateRequirements(@Param('id') id: string, @Body() body: any) {
     if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException('5Invalid id');
     }
     return firstValueFrom(this.eventsClient.send('requirements.update', { id, body }));
   }
@@ -142,8 +120,48 @@ export class EventsGatewayController {
   @ApiResponse({ status: 404, description: 'Requirements not found.' })
   async deleteRequirements(@Param('id') id: string) {
     if (!isObjectId(id)) {
-      throw new BadRequestException('Invalid id');
+      throw new BadRequestException('6Invalid id');
     }
     return firstValueFrom(this.eventsClient.send('requirements.delete', id));
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get an event by ID' })
+  @ApiResponse({ status: 200, description: 'Event found.' })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
+  async getById(@Param('id') id: string) {
+    if (!isObjectId(id)) {
+      throw new BadRequestException('7Invalid id');
+    }
+    return firstValueFrom(this.eventsClient.send('events.getById', id));
+  }
+
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Get events by user ID' })
+  @ApiResponse({ status: 200, description: 'List of events for the user.' })
+  async getByUserId(@Param('userId') userId: string) {
+    return firstValueFrom(this.eventsClient.send('events.getByUserId', userId));
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update an event by ID' })
+  @ApiResponse({ status: 200, description: 'Event updated successfully.' })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
+  async updateEvent(@Param('id') id: string, @Body() body: any) {
+    if (!isObjectId(id)) {
+      throw new BadRequestException('8Invalid id');
+    }
+    return firstValueFrom(this.eventsClient.send('events.update', { id, body }));
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete an event by ID' })
+  @ApiResponse({ status: 200, description: 'Event deleted successfully.' })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
+  async deleteEvent(@Param('id') id: string) {
+    if (!isObjectId(id)) {
+      throw new BadRequestException('9Invalid id');
+    }
+    return firstValueFrom(this.eventsClient.send('events.delete', id));
   }
 }

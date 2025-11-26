@@ -24,7 +24,14 @@ export class AuctionsRmqController {
 
   @MessagePattern('auctions.getById')
   async getById(@Payload() id: string) {
-    const auction = await this.getAuction.execute(id);
+    const auction = await this.getAuction.executeById(id);
+    if (!auction) return null;
+    return toAuctionDTO(auction);
+  }
+
+  @MessagePattern('auctions.getByEventId')
+  async getByEventId(@Payload() event_id: string) {
+    const auction = await this.getAuction.execute(event_id);
     if (!auction) return null;
     return toAuctionDTO(auction);
   }
