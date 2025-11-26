@@ -1,5 +1,5 @@
 // mongoose-auction.repository.ts
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Auction, AuctionDocument } from './auction.schema';
@@ -7,10 +7,24 @@ import { AuctionRepositoryPort } from '../../domain/auctions/auction.repository.
 import { Auction as AuctionEntity } from '../../domain/auctions/auction.entity';
 
 @Injectable()
-export class MongooseAuctionRepository implements AuctionRepositoryPort {
+export class MongooseAuctionRepository implements AuctionRepositoryPort, OnModuleInit {
   constructor(
     @InjectModel(Auction.name) private auctionModel: Model<AuctionDocument>
   ) { }
+
+  async onModuleInit() {
+    try {
+      const indexes = await this.auctionModel.collection.indexes();
+      const idIndex = indexes.find(index => index.name === 'id_1');
+      if (idIndex) {
+        console.log('Dropping obsolete index: id_1');
+        await this.auctionModel.collection.dropIndex('id_1');
+        console.log('Index dropped successfully');
+      }
+    } catch (error) {
+      console.error('Error checking/dropping index:', error);
+    }
+  }
 
   async save(auction: AuctionEntity): Promise<AuctionEntity> {
     const created = new this.auctionModel(auction);
